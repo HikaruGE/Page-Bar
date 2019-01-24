@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="pageBar">
+        <ul th:with="baseUrl=${#httpServletRequest.getRequestURL()},len=${9},midLen=${5}">
+            <li th:with="pageNum=${data.number}-1"><a th:href="!${data.first}? @{${baseUrl}(page=${pageNum})}:@{javascript:void(0);}"><<</a></li>
+
+            <div th:if="${data.totalPages} <= ${len}">
+                <li th:each="i:${#numbers.sequence(1,data.totalPages)}" th:with="pageNum=${i}-1"><a th:text="${i}" th:href="@{${baseUrl}(page=${pageNum})}"></a></li>
+            </div>
+
+            <div th:if="${len} < ${data.totalPages} and  ${data.totalPages} <= (${len}+${midLen})">
+                <div th:if="(${data.number}+1) <= ${len}-2" th:with="up=${len}-2" th:fragment="rightOmit">
+                    <li th:each="i:${#numbers.sequence(1,up)}" th:with="pageNum=${i}-1"><a th:text="${i}" th:href="@{${baseUrl}(page=${pageNum})}"></a></li>
+                    <li>...</li>
+                    <li th:with="pageNum=${data.totalPages}-1" th:fragment="lastPage"><a th:text="${data.totalPages}" th:href="@{${baseUrl}(page=${pageNum})}"></a></li>
+                </div>
+
+                <div th:if="${data.totalPages}-(${len}-2)+1 <= ${data.number}+1 and (${data.number}+1) > ${len}-2" th:with="down=${data.totalPages}-(${len}-2)+1" th:fragment="leftOmit">
+                    <li th:fragment="firstPage"><a th:href="@{${baseUrl}(page=1)}">1</a></li>
+                    <li>...</li>
+                    <li th:each="i:${#numbers.sequence(down,data.totalPages)}" th:with="pageNum=${i}-1"><a th:text="${i}" th:href="@{${baseUrl}(page=${pageNum})}"></a></li>
+                </div>
+            </div>
+
+            <div th:if="${data.totalPages} > ${len}+${midLen}">
+                <!--<h1 th:text="${midLen}/2"></h1>-->
+                <div th:replace="::rightOmit"></div>
+
+                <div th:if="${len}-2 < (${data.number}+1) and (${data.number}+1) < ${data.totalPages}-(${len}-2)+1">
+                    <li th:replace="::firstPage"></li>
+                    <li>...</li>
+                    <div th:with="down=${data.number}-${midLen}/2,up=${data.number}+${midLen}/2">
+                        <li th:each="i:${#numbers.sequence(down,up)}"><a th:text="${i}+1" th:href="@{${baseUrl}(page=${i})}"></a></li>
+                    </div>
+                    <li>...</li>
+                    <li th:replace="::lastPage"></li>
+                </div>
+
+                <div th:replace="::leftOmit"></div>
+            </div>
+
+            <li th:with="pageNum=${data.number}+1"><a th:href="!${data.last}? @{${baseUrl}(page=${pageNum})}:@{javascript:void(0);}">>></a></li>
+        </ul>
+    </div>
+</body>
+</html>

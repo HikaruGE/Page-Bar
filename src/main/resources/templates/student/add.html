@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${student==null}?'Add Student':'Edit '+${student.name}"></title>
+</head>
+<body>
+
+    <form method="post" th:action="@{/student}">
+        <input type="hidden" name="_method" value="PUT" th:if="${student!=null}">
+        <input type="hidden" name="id" th:if="${student!=null}" th:value="${student.id}">
+        <table border="1">
+            <tr>
+                <td>Name:</td>
+                <td><input name="name" type="text" th:value="${student!=null}?${student.name}"></td>
+            </tr>
+            <tr>
+                <td>Phone:</td>
+                <td><input name="phone" type="text" th:value="${student!=null}?${student.phone}"></td>
+            </tr>
+            <tr>
+                <td><button type="submit" value="Submit" th:text="${student!=null}?'Edit':'Add'"></button></td>
+                <td><input type="reset" value="Reset"></td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>
